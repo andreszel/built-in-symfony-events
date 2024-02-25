@@ -66,4 +66,5 @@ https://symfony.com/doc/current/form/events.html#2-submitting-a-form-formevents-
 
 # Doctrine Events
 
+https://symfony.com/doc/6.4/doctrine/events.html
 
