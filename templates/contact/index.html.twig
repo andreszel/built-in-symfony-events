@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact FORM - Events!{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+    <p>
+        <a href="{{ path('app_home') }}" class="btn btn-success">Homepage</a>
+    </p>
+
+{% endblock %}

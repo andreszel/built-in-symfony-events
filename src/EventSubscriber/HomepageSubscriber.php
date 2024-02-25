@@ -50,7 +50,7 @@ class HomepageSubscriber implements EventSubscriberInterface
         $value = $event->getControllerResult();
         $response = new Response();
 
-        $event->setResponse($response);
+        //$event->setResponse($response);
     }
 
     public function onKernelResponse(ResponseEvent $event): void
@@ -84,7 +84,7 @@ class HomepageSubscriber implements EventSubscriberInterface
         $exception = $event->getThrowable();
         $response = new Response();
         // setup the Response object based on the caught exception
-        $event->setResponse($response);
+        //$event->setResponse($response);
 
         // you can alternatively set a new Exception
         // $exception = new \Exception('Some special exception');
