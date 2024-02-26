@@ -21,10 +21,9 @@ class AddEmailFieldSubscriber implements EventSubscriberInterface
         $data = $event->getData();
         $form = $event->getForm();
 
-        // only logged user
-        /* if(!$user) {
+        if(!$data) {
             return;
-        } */
+        }
 
         $randomNumber = rand(1000,20000);
 

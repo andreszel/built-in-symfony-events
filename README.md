@@ -66,5 +66,87 @@ https://symfony.com/doc/current/form/events.html#2-submitting-a-form-formevents-
 
 # Doctrine Events
 
+Doctrine to zestaw bibliotek używanych przez Symfony do pracy z bazami danych, zapewnia lekki system zdarzeń do aktualizacji encji podczas działania aplikacji. Przykładowo pola updatedAt, createdAt można w łatwy sposób zaktualizować tuż przez Updatem lub tuż przed Insertem.
+Zdarzeniami, które mogą być wywołane są: prePersist, postPersist, preUpdate, postUpdate. Wyróżnić możemy 3 różne sposoby nasłuchiwania tych zdarzeń:
+
+    1. Lifecycle callbacks - publiczna metoda, prosta logika, tylko w konkretnej encji, nie mogą używać serwisów.
+#[ORM\HasLifecycleCallbacks], #[ORM\PrePersist], #[ORM\PreUpdate] => setCreatedAtValue()
+
+    2. Entity listener - publiczna metoda, złożona logika, tylko dla konkretnej encji, może używać serwisów.
+
+Tworzymy klasę i odpowiednio powiązujemy ją z eventem.
+
+<?php
+namespace App\EventListener;
+
+use App\Entity\User;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+
+class UserChangedNotifier
+{
+    public function postUpdate(User $user, PostUpdateEventArgs $event): void
+    {
+        // ... do something to notify the changes
+    }
+}
+
+- dodajemy atrybut przed klasą
+
+    namespace App\EventListener;
+
+    // ...
+    use App\Entity\User;
+    use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
+    use Doctrine\ORM\Events;
+
+    #[ORM\HasLifecycleCallbacks], #[ORM\PrePersist], #[ORM\PreUpdate] => setCreatedAtValue()
+
+- lub alternatywnie w pliku services.yaml dodajemy konfigurację dla tej klasy:
+
+    App\EventListener\UserChangedNotifier:
+        tags:
+            -
+                # these are the options required to define the entity listener
+                name: 'doctrine.orm.entity_listener'
+                event: 'postUpdate'
+                entity: 'App\Entity\User'
+
+
+    3. Lifecycle listeners - tak samo jak entity listener, ale mogą być wywoływane dla wszystkich encji, idealne do udostępniania logiki między 
+    encjami.
+
+    - definiujemy klasę
+
+    class SearchIndexer
+    {
+        public function postPersist(PostPersistEventArgs $args): void
+        {
+            $entity = $args->getObject();
+
+            if (!$entity instanceof Product) {
+                return;
+            }
+
+            $entityManager = $args->getObjectManager();
+            // ... do something with the Product entity
+        }
+    }
+
+    - dodajemy atrybut
+
+    #[AsDoctrineListener(event: Events::postPersist, priority: 500, connection: 'default')]
+
+    Ciekawy wpis:
+    https://hugo.alliau.me/posts/2023-11-12-listen-to-doctrine-events-on-entities-given-a-php-attribute.html
+
+    4. Lifecycle subscribers - deprecated od Symfony 6.3
+
+
+
+Wydajność tych mechanizmów zależy od ilościa encji, najszybciej działa lifecycle callbacks, a najwolniej lifecycle listeners, pośrodku jest entity listener. To tyle jeżeli chodzi o podstawy o zdarzeniach Doctrine, kiedy używać ich w aplikacji Symfony. Wyjaśnienie dotyczy listenerów i subscriberów dla Doctrine ORM.
+
+
+
+
 https://symfony.com/doc/6.4/doctrine/events.html
 

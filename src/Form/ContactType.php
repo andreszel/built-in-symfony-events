@@ -54,6 +54,7 @@ class ContactType extends AbstractType
         $randomNumber = rand(1000,20000);
         $data->setMessage('###' . $randomNumber . ' Default message set in preSetData Event! Write your own message.');
 
+        // if error, field email will be added in AddEmailFieldSubscriber - event onPreSubmit
         $form->remove('email');
 
         $event->setData($data);
