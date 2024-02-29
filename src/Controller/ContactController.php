@@ -16,12 +16,6 @@ class ContactController extends AbstractController
     {
         $contact = new Contact();
 
-        /* $form = $this->createFormBuilder($contact)
-            ->add('name', TextType::class)
-            ->add('phone', TextType::class)
-            ->add('message', TextareaType::class)
-            ->add('Save', SubmitType::class, ['label' => 'Wyślij wiadomość'])
-            ->getForm(); */
         $form = $this->createForm(ContactType::class, $contact);
 
         $form->handleRequest($request);

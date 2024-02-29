@@ -115,8 +115,9 @@ class UserChangedNotifier
     3. Lifecycle listeners - tak samo jak entity listener, ale mogą być wywoływane dla wszystkich encji, idealne do udostępniania logiki między 
     encjami.
 
-    - definiujemy klasę
+    - definiujemy klasę i umieszczamy odpowiedni atrybut
 
+    #[AsDoctrineListener(event: Events::postPersist, priority: 500, connection: 'default')]
     class SearchIndexer
     {
         public function postPersist(PostPersistEventArgs $args): void
@@ -131,10 +132,6 @@ class UserChangedNotifier
             // ... do something with the Product entity
         }
     }
-
-    - dodajemy atrybut
-
-    #[AsDoctrineListener(event: Events::postPersist, priority: 500, connection: 'default')]
 
     Ciekawy wpis:
     https://hugo.alliau.me/posts/2023-11-12-listen-to-doctrine-events-on-entities-given-a-php-attribute.html
