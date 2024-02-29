@@ -4,8 +4,14 @@
 
 {% block body %}
     <h1>Edit Project</h1>
+    <div class="card">
+        <div class="card-header">
+            <a class="btn btn-sm btn-outline-info float-right" href="{{ path('app_project_index') }}"> 
+                View All Projects
+            </a>
+        </div>
+        {{ include('project/_form.html.twig', {'button_label': 'Update', 'button_color': 'btn-outline-success'}) }}
 
-    {{ include('project/_form.html.twig', {'button_label': 'Update'}) }}
-
-    {{ include('project/_delete_form.html.twig') }}
+        {{ include('project/_delete_form.html.twig') }}
+    </div>
 {% endblock %}
