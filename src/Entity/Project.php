@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\ProjectRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -20,7 +19,7 @@ class Project
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $slug = null;
+    private ?string $slug = '';
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -101,10 +100,10 @@ class Project
     {
         $this->setCreatedAt(new \DateTime('now'));
 
-        $slugger = new AsciiSlugger();
+        /* $slugger = new AsciiSlugger();
         $slug = $slugger->slug($this->name)->lower();
 
-        $this->setSlug($slug);
+        $this->setSlug($slug); */
     }
 
     #[ORM\PreUpdate]
