@@ -3,14 +3,22 @@
 namespace App\EventListener;
 
 use App\Entity\Project;
+use App\Service\Slugger;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
-use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: Project::class)]
 class ProjectChangeSlugListener
 {
+    private $slugger;
+
+    public function __construct(SluggerInterface $slugger)
+    {
+        $this->slugger = $slugger;
+    }
+
     public function postUpdate(Project $project, PostUpdateEventArgs $event):void
     {
         $entity = $event->getObject();
@@ -19,14 +27,9 @@ class ProjectChangeSlugListener
             return;
         }
 
+        $entity->setSlug($this->slugger->slug($entity->getName()));
+
         $entityManager = $event->getObjectManager();
-
-        $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($project->getName())->lower();
-
-        $project->setSlug($slug);
-
-        $entityManager->persist($project);
         $entityManager->flush();
     }
 }

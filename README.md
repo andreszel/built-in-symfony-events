@@ -92,14 +92,11 @@ class UserChangedNotifier
 
 - dodajemy atrybut przed klasą
 
-    namespace App\EventListener;
-
     // ...
-    use App\Entity\User;
     use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
     use Doctrine\ORM\Events;
 
-    #[ORM\HasLifecycleCallbacks], #[ORM\PrePersist], #[ORM\PreUpdate] => setCreatedAtValue()
+    #[AsEntityListener(event: Events::postUpdate, method: 'postUpdate', entity: User::class)]
 
 - lub alternatywnie w pliku services.yaml dodajemy konfigurację dla tej klasy:
 
@@ -118,18 +115,26 @@ class UserChangedNotifier
     - definiujemy klasę i umieszczamy odpowiedni atrybut
 
     #[AsDoctrineListener(event: Events::postPersist, priority: 500, connection: 'default')]
+    #[AsDoctrineListener(event: Events::postUpdate, priority: 400, connection: 'default')]
+    #[AsDoctrineListener(event: Events::postRemove, priority: 300, connection: 'default')]
     class SearchIndexer
     {
+        // persist - only new record, first stored
         public function postPersist(PostPersistEventArgs $args): void
         {
-            $entity = $args->getObject();
+            // ...
+        }
 
-            if (!$entity instanceof Product) {
-                return;
-            }
+        // update - every exists stored object
+        public function postUpdate(PostUpdateEventArgs $args): void
+        {
+            // ...
+        }
 
-            $entityManager = $args->getObjectManager();
-            // ... do something with the Product entity
+        // remove - every exists stored object
+        public function postRemove(PostRemoveEventArgs $args): void
+        {
+            // ...
         }
     }
 
@@ -140,7 +145,7 @@ class UserChangedNotifier
 
 
 
-Wydajność tych mechanizmów zależy od ilościa encji, najszybciej działa lifecycle callbacks, a najwolniej lifecycle listeners, pośrodku jest entity listener. To tyle jeżeli chodzi o podstawy o zdarzeniach Doctrine, kiedy używać ich w aplikacji Symfony. Wyjaśnienie dotyczy listenerów i subscriberów dla Doctrine ORM.
+Wydajność tych mechanizmów zależy od ilości encji, najszybciej działa lifecycle callbacks, a najwolniej lifecycle listeners, pośrodku jest entity listener. To tyle jeżeli chodzi o podstawy o zdarzeniach Doctrine, kiedy używać ich w aplikacji Symfony. Wyjaśnienie dotyczy listenerów i subscriberów dla Doctrine ORM.
 
 
 

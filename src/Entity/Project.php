@@ -99,11 +99,6 @@ class Project
     public function prePersist(): void
     {
         $this->setCreatedAt(new \DateTime('now'));
-
-        /* $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($this->name)->lower();
-
-        $this->setSlug($slug); */
     }
 
     #[ORM\PreUpdate]
