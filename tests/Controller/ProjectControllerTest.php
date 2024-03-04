@@ -4,6 +4,7 @@ namespace App\Test\Controller;
 
 use App\Entity\Project;
 use App\Repository\ProjectRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -42,6 +43,7 @@ class ProjectControllerTest extends WebTestCase
 
     public function testNew(): void
     {
+        $currentDate = new DateTime();
         $this->markTestIncomplete();
         $this->client->request('GET', sprintf('%snew', $this->path));
 
@@ -51,24 +53,25 @@ class ProjectControllerTest extends WebTestCase
             'project[name]' => 'Testing',
             'project[slug]' => 'Testing',
             'project[description]' => 'Testing',
-            'project[createdAt]' => 'Testing',
-            'project[updatedAt]' => 'Testing',
+            'project[createdAt]' => $currentDate,
+            'project[updatedAt]' => $currentDate,
         ]);
 
         self::assertResponseRedirects('/sweet/food/');
 
-        self::assertSame(1, $this->getRepository()->count([]));
+        self::assertSame(1, $this->repository->count([]));
     }
 
     public function testShow(): void
     {
+        $currentDate = new DateTime();
         $this->markTestIncomplete();
         $fixture = new Project();
         $fixture->setName('My Title');
         $fixture->setSlug('My Title');
         $fixture->setDescription('My Title');
-        $fixture->setCreatedAt('My Title');
-        $fixture->setUpdatedAt('My Title');
+        $fixture->setCreatedAt($currentDate);
+        $fixture->setUpdatedAt($currentDate);
 
         $this->manager->persist($fixture);
         $this->manager->flush();
@@ -83,13 +86,14 @@ class ProjectControllerTest extends WebTestCase
 
     public function testEdit(): void
     {
+        $currentDate = new DateTime();
         $this->markTestIncomplete();
         $fixture = new Project();
         $fixture->setName('Value');
         $fixture->setSlug('Value');
         $fixture->setDescription('Value');
-        $fixture->setCreatedAt('Value');
-        $fixture->setUpdatedAt('Value');
+        $fixture->setCreatedAt($currentDate);
+        $fixture->setUpdatedAt($currentDate);
 
         $this->manager->persist($fixture);
         $this->manager->flush();
@@ -100,8 +104,8 @@ class ProjectControllerTest extends WebTestCase
             'project[name]' => 'Something New',
             'project[slug]' => 'Something New',
             'project[description]' => 'Something New',
-            'project[createdAt]' => 'Something New',
-            'project[updatedAt]' => 'Something New',
+            'project[createdAt]' => $currentDate,
+            'project[updatedAt]' => $currentDate,
         ]);
 
         self::assertResponseRedirects('/project/');
@@ -111,19 +115,20 @@ class ProjectControllerTest extends WebTestCase
         self::assertSame('Something New', $fixture[0]->getName());
         self::assertSame('Something New', $fixture[0]->getSlug());
         self::assertSame('Something New', $fixture[0]->getDescription());
-        self::assertSame('Something New', $fixture[0]->getCreatedAt());
-        self::assertSame('Something New', $fixture[0]->getUpdatedAt());
+        self::assertSame($currentDate, $fixture[0]->getCreatedAt());
+        self::assertSame($currentDate, $fixture[0]->getUpdatedAt());
     }
 
     public function testRemove(): void
     {
+        $currentDate = new DateTime();
         $this->markTestIncomplete();
         $fixture = new Project();
         $fixture->setName('Value');
         $fixture->setSlug('Value');
         $fixture->setDescription('Value');
-        $fixture->setCreatedAt('Value');
-        $fixture->setUpdatedAt('Value');
+        $fixture->setCreatedAt($currentDate);
+        $fixture->setUpdatedAt($currentDate);
 
         $this->manager->remove($fixture);
         $this->manager->flush();
